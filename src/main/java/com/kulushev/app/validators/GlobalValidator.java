@@ -8,7 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = UserReqDtoValidator.class) // Указываем, какой класс будет валидатором
+@Constraint(validatedBy = {
+        UserReqDtoValidator.class,
+        OrderReqDtoValidator.class,
+        GoodReqDtoValidator.class
+})
 @Target(ElementType.TYPE) // Аннотация применяется ко всему классу (record)
 @Retention(RetentionPolicy.RUNTIME) // Аннотация должна работать во время выполнения
 public @interface GlobalValidator {

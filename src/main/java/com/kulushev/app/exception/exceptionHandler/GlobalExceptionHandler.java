@@ -1,8 +1,10 @@
 package com.kulushev.app.exception.exceptionHandler;
 
 import com.kulushev.app.exception.ErrorResponseDto;
+import com.kulushev.app.exception.OrderNotFoundException;
 import com.kulushev.app.exception.UserAlreadyExist;
 import com.kulushev.app.exception.UserNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +15,7 @@ import org.springframework.validation.FieldError;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -29,7 +32,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(new ErrorResponseDto(errorMessage));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(value = {UserNotFoundException.class,
+            OrderNotFoundException.class})
     public ResponseEntity<ErrorResponseDto> notFoundException(Exception ex) {
         String errorMessage = String.format("%s", ex.getMessage());
         return ResponseEntity.status(404).body(new ErrorResponseDto(errorMessage));
@@ -54,6 +58,15 @@ public class GlobalExceptionHandler {
         body.put("errors", errors);
 
         return ResponseEntity.status(400).body(body);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleValidationException(ConstraintViolationException ex) {
+        String errorMessage = ex.getConstraintViolations().stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .collect(Collectors.joining(", "));
+
+        return ResponseEntity.status(400).body(new ErrorResponseDto(errorMessage));
     }
 
 }

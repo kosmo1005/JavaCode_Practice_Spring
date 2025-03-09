@@ -1,16 +1,18 @@
 package com.kulushev.app.dto;
 
-import com.kulushev.app.entity.GoodEntity;
 import com.kulushev.app.entity.OrderEntity;
+import com.kulushev.app.enums.OrderStatus;
+import com.kulushev.app.validators.GlobalValidator;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * DTO for {@link OrderEntity}
  */
+@GlobalValidator
 public record OrderReqDto(
-        UUID userId,
-        List<GoodEntity> goods
+        String userId,
+        List<GoodReqDto> goods,
+        OrderStatus status
 ) {
 }

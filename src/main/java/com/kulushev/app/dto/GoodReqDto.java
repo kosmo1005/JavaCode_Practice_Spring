@@ -1,15 +1,15 @@
 package com.kulushev.app.dto;
 
-import com.kulushev.app.entity.UserEntity;
 import com.kulushev.app.validators.GlobalValidator;
 
+import java.math.BigDecimal;
 
 /**
- * Request DTO for {@link UserEntity}
+ * DTO for {@link com.kulushev.app.entity.GoodEntity}
  */
 @GlobalValidator
-public record UserReqDto(
+public record GoodReqDto(
         String name,
-        String email
+        BigDecimal price
 ) {
 }

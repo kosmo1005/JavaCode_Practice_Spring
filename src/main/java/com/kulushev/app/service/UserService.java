@@ -6,7 +6,7 @@ import com.kulushev.app.exception.UserAlreadyExist;
 import com.kulushev.app.exception.UserNotFoundException;
 import com.kulushev.app.repository.UserRepository;
 import com.kulushev.app.transformer.UserTransformer;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
