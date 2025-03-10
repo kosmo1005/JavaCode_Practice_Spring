@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -42,7 +43,8 @@ public class OrderControllerTest {
         Page<OrderRespDto> page = new PageImpl<>(
                 OrderDataProvider.getOrdersList().subList(0, 10), PageRequest.of(0, 10), 11);
 
-        when(orderService.getAll(0, 10)).thenReturn(page);
+        Pageable pageable = PageRequest.of(0, 10);
+        when(orderService.getAll(pageable)).thenReturn(page);
 
         mockMvc.perform(get(BASE_URL + "?page=0&size=10")
                         .contentType(MediaType.APPLICATION_JSON))

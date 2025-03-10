@@ -62,8 +62,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderRespDto> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+    public Page<OrderRespDto> getAll(Pageable pageable) {
         return repo.findAll(pageable).map(t::entityToDto);
     }
 

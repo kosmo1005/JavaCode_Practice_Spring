@@ -4,14 +4,12 @@ import com.kulushev.app.dto.OrderReqDto;
 import com.kulushev.app.dto.OrderRespDto;
 import com.kulushev.app.service.OrderService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-
 
 @RestController
 @RequestMapping("/app/orders")
@@ -27,9 +25,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public Page<OrderRespDto> getAll(@RequestParam(defaultValue = "0") @Min(0) int page,
-                                     @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
-        return orderService.getAll(page, size);
+    public Page<OrderRespDto> getAll(@PageableDefault(size = 10) Pageable pageable) {
+        return orderService.getAll(pageable);
     }
 
     @PostMapping
