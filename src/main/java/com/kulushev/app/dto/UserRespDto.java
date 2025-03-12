@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public record UserRespDto(
         @JsonView(Views.FullInfo.class) UUID id,
-        @JsonView(Views.ShortInfo.class) String name,
+        @JsonView(Views.ShortInfo.class) String firstName,
+        @JsonView(Views.FullInfo.class) String lastName,
         @JsonView(Views.ShortInfo.class) String email,
         @JsonView(Views.FullInfo.class) List<OrderRespDto> orders
         ) {

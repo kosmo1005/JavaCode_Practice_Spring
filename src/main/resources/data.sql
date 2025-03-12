@@ -1,6 +1,6 @@
-INSERT INTO my_user (id, name, email)
-VALUES ('550e8400-e29b-41d4-a716-446655440000', 'John Doe', 'john@example.com'),
-       ('550e8400-e29b-41d4-a716-446655440001', 'Jane Doe', 'jane@example.com');
+INSERT INTO my_user (id, first_name, last_name, email)
+VALUES ('550e8400-e29b-41d4-a716-446655440000', 'John', 'Doe', 'john@example.com'),
+       ('550e8400-e29b-41d4-a716-446655440001', 'Jane', 'Doe', 'jane@example.com');
 
 INSERT INTO user_order (user_id, status, total_price)
 VALUES ('550e8400-e29b-41d4-a716-446655440000', 'NEW', 1125.00),

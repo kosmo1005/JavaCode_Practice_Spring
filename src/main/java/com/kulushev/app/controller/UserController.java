@@ -3,6 +3,8 @@ package com.kulushev.app.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.kulushev.app.dto.UserReqDto;
 import com.kulushev.app.dto.UserRespDto;
+import com.kulushev.app.views.UserFullNameProjection;
+import com.kulushev.app.views.UserWithInfoAboutOrders;
 import com.kulushev.app.views.Views;
 import com.kulushev.app.service.UserService;
 import jakarta.validation.Valid;
@@ -40,6 +42,15 @@ public class UserController {
     @JsonView(Views.FullInfo.class)
     public UserRespDto getFullInfoByUserId(@PathVariable ("id") UUID id) {
         return userService.getUserById(id);
+    }
+
+    @GetMapping("/fullName/{id}")
+    public UserFullNameProjection getFullNameById(@PathVariable ("id") UUID id) {
+        return userService.getFullNameById(id);
+    }
+    @GetMapping("/infoAboutOrders/{id}")
+    public UserWithInfoAboutOrders getUserWithInfoAboutOrders(@PathVariable ("id") UUID id) {
+        return userService.getUserWithInfoAboutOrders(id);
     }
 
     @PostMapping

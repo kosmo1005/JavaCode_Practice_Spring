@@ -58,14 +58,25 @@ public class UserControllerTest {
     }
 
     @Test
-    void addNewUser_thenReturn400Status_invalidName() throws Exception {
+    void addNewUser_thenReturn400Status_invalidFirstName() throws Exception {
 
         mockMvc.perform(post(BASE_URL)
-                        .content(objectMapper.writeValueAsString(UserDataProvider.getUserReqDto_InvalidName()))
+                        .content(objectMapper.writeValueAsString(UserDataProvider.getUserReqDto_InvalidFirstName()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0]")
-                        .value("Name must consist of two words, each starting with a capital letter, separated by a space"));
+                        .value("The first name must consist only of letters, must not contain spaces, and must begin with a capital letter."));
+    }
+
+    @Test
+    void addNewUser_thenReturn400Status_invalidLastName() throws Exception {
+
+        mockMvc.perform(post(BASE_URL)
+                        .content(objectMapper.writeValueAsString(UserDataProvider.getUserReqDto_InvalidLastName()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0]")
+                        .value("The last name must consist only of letters, must not contain spaces, and must begin with a capital letter."));
     }
 
     @Test
@@ -80,14 +91,14 @@ public class UserControllerTest {
     }
 
     @Test
-    void addNewUser_thenReturn400Status_invalidEmailAndName() throws Exception {
+    void addNewUser_thenReturn400Status_invalidEmailAndFirstName() throws Exception {
 
         mockMvc.perform(post(BASE_URL)
-                        .content(objectMapper.writeValueAsString(UserDataProvider.getUserReqDto_InvalidEmailAndName()))
+                        .content(objectMapper.writeValueAsString(UserDataProvider.getUserReqDto_InvalidEmailAndFirstName()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
                 .andExpect(jsonPath("$.errors", containsInAnyOrder(
-                        "Name must consist of two words, each starting with a capital letter, separated by a space",
+                        "The first name must consist only of letters, must not contain spaces, and must begin with a capital letter.",
                         "Invalid email format"
                 )));
     }
@@ -100,7 +111,7 @@ public class UserControllerTest {
         mockMvc.perform(get(BASE_URL + "/" + userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("John Doe"))
+                .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.email").value("john@example.com"));
     }
 
@@ -113,7 +124,8 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("32e2a465-4945-4f5e-81df-63e1780df364"))
-                .andExpect(jsonPath("$.name").value("John Doe"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.email").value("john@example.com"))
                 .andExpect(jsonPath("$.orders", hasSize(2)))
                 .andExpect(jsonPath("$.orders[0].id").value(1))

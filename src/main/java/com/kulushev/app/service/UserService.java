@@ -6,6 +6,8 @@ import com.kulushev.app.exception.UserAlreadyExist;
 import com.kulushev.app.exception.UserNotFoundException;
 import com.kulushev.app.repository.UserRepository;
 import com.kulushev.app.transformer.UserTransformer;
+import com.kulushev.app.views.UserFullNameProjection;
+import com.kulushev.app.views.UserWithInfoAboutOrders;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class UserService {
 
     @Transactional
     public UserRespDto findUserByName(String name) {
-        return t.entityToDto(repo.findByName(name)
+        return t.entityToDto(repo.findByFirstName(name)
                 .orElseThrow(() -> new UserNotFoundException("User not found")));
     }
 
@@ -60,6 +62,18 @@ public class UserService {
             throw new UserNotFoundException("User not found");
         }
          repo.deleteById(id);
+    }
+
+    @Transactional
+    public UserFullNameProjection getFullNameById(UUID id) {
+        return repo.findFullNameById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    @Transactional
+    public UserWithInfoAboutOrders getUserWithInfoAboutOrders(UUID id) {
+        return repo.findUserWithInfoAboutOrders(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Transactional

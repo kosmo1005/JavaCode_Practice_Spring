@@ -16,7 +16,8 @@ public class UserDataProvider {
     public static UserRespDto getUserRespDto_1() {
         return new UserRespDto(
                 USER_ID,
-                "John Doe",
+                "John",
+                "Doe",
                 "john@example.com",
                 getOrdersList());
     }
@@ -51,22 +52,32 @@ public class UserDataProvider {
 
     public static UserReqDto getUserReq_ValidDto() {
         return new UserReqDto(
-                "John Doe",
+                "John",
+                "Doe",
                 "john@example.com");
     }
-    public static UserReqDto getUserReqDto_InvalidName() {
+    public static UserReqDto getUserReqDto_InvalidFirstName() {
         return new UserReqDto(
-                "Jo34 Doe",
+                "Jo34",
+                "Doe",
+                "john@example.com");
+    }
+    public static UserReqDto getUserReqDto_InvalidLastName() {
+        return new UserReqDto(
+                "John",
+                "D34",
                 "john@example.com");
     }
     public static UserReqDto getUserReqDto_InvalidEmail() {
         return new UserReqDto(
-                "John Doe",
+                "John",
+                "Doe",
                 "johnexample.com");
     }
-    public static UserReqDto getUserReqDto_InvalidEmailAndName() {
+    public static UserReqDto getUserReqDto_InvalidEmailAndFirstName() {
         return new UserReqDto(
-                "Jo34 Doe",
+                "Jo34",
+                "Doe",
                 "johnexample.com");
     }
 }

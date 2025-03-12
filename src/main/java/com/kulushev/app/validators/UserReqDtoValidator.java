@@ -13,15 +13,22 @@ public class UserReqDtoValidator implements ConstraintValidator<GlobalValidator,
         boolean isValid = true;
         context.disableDefaultConstraintViolation();
 
-        // Проверяем имя
-        if (user.name() == null || !user.name().matches("^[A-Z][a-zA-Z]* [A-Z][a-zA-Z]*$")) {
-            context.buildConstraintViolationWithTemplate("Name must consist of two words, each starting with a capital letter, separated by a space")
-                    .addPropertyNode("name") // Указываем, что ошибка относится к полю name
+        if (user.firstName() == null || !user.firstName().matches("^[A-Z][a-zA-Z]*$")) {
+            context.buildConstraintViolationWithTemplate(
+                    "The first name must consist only of letters, must not contain spaces, and must begin with a capital letter.")
+                    .addPropertyNode("firstName")
                     .addConstraintViolation();
             isValid = false;
         }
 
-        // Проверяем email
+        if (user.lastName() == null || !user.lastName().matches("^[A-Z][a-zA-Z]*$")) {
+            context.buildConstraintViolationWithTemplate(
+                            "The last name must consist only of letters, must not contain spaces, and must begin with a capital letter.")
+                    .addPropertyNode("lastName")
+                    .addConstraintViolation();
+            isValid = false;
+        }
+
         if (user.email() == null || !user.email().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             context.buildConstraintViolationWithTemplate("Invalid email format")
                     .addPropertyNode("email")

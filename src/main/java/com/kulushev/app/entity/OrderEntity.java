@@ -40,7 +40,6 @@ public class OrderEntity {
     @Column(name = "total_price", precision = 19, scale = 2)
     private BigDecimal totalPrice;
 
-    @Column(name = "goods")
     @OneToMany (mappedBy = "order")
     private List<GoodEntity> goods;
 }
