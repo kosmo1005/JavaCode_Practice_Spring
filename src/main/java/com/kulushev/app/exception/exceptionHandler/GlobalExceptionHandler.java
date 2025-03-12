@@ -1,6 +1,7 @@
 package com.kulushev.app.exception.exceptionHandler;
 
 import com.kulushev.app.exception.ErrorResponseDto;
+import com.kulushev.app.exception.OrderNotFoundException;
 import com.kulushev.app.exception.UserAlreadyExist;
 import com.kulushev.app.exception.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(new ErrorResponseDto(errorMessage));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(value = {UserNotFoundException.class, OrderNotFoundException.class})
     public ResponseEntity<ErrorResponseDto> notFoundException(Exception ex) {
         String errorMessage = String.format("%s", ex.getMessage());
         return ResponseEntity.status(404).body(new ErrorResponseDto(errorMessage));

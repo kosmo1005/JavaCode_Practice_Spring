@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -85,8 +86,10 @@ public class UserControllerTest {
                         .content(objectMapper.writeValueAsString(UserDataProvider.getUserReqDto_InvalidEmailAndName()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[1]").value("Name must consist of two words, each starting with a capital letter, separated by a space"))
-                .andExpect(jsonPath("$.errors[0]").value("Invalid email format"));
+                .andExpect(jsonPath("$.errors", containsInAnyOrder(
+                        "Name must consist of two words, each starting with a capital letter, separated by a space",
+                        "Invalid email format"
+                )));
     }
 
     @Test
