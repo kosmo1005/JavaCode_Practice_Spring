@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record OrderRespDto(
-        Long id,
+        UUID id,
         UUID userId,
         OrderStatus status,
         BigDecimal totalPrice,

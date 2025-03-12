@@ -9,7 +9,7 @@ CREATE TABLE my_user (
 );
 
 CREATE TABLE user_order (
-                         id SERIAL PRIMARY KEY,
+                         id UUID PRIMARY KEY,
                          user_id UUID NOT NULL,
                          status VARCHAR(50) NOT NULL,
                          total_price DECIMAL(19,2),
@@ -17,9 +17,9 @@ CREATE TABLE user_order (
 );
 
 CREATE TABLE good (
-                      id SERIAL PRIMARY KEY,
+                      id UUID PRIMARY KEY,
                       name VARCHAR(255) NOT NULL,
                       price DECIMAL(19,2) NOT NULL,
-                      order_id BIGINT,
+                      order_id UUID,
                       FOREIGN KEY (order_id) REFERENCES user_order(id) ON DELETE CASCADE
 );

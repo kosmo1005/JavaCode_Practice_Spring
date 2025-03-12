@@ -5,11 +5,11 @@ import com.kulushev.app.dto.OrderRespDto;
 import com.kulushev.app.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/app/orders")
@@ -20,13 +20,13 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/{id}")
-    public OrderRespDto getById(@PathVariable Long id) {
+    public OrderRespDto getById(@PathVariable UUID id) {
         return orderService.getById(id);
     }
 
     @GetMapping
-    public Page<OrderRespDto> getAll(@PageableDefault(size = 10) Pageable pageable) {
-        return orderService.getAll(pageable);
+    public List<OrderRespDto> getAll() {
+        return orderService.getAll();
     }
 
     @PostMapping
@@ -35,16 +35,14 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public OrderRespDto update(@PathVariable Long id, @RequestBody OrderReqDto reqDto) {
+    public OrderRespDto update(@PathVariable UUID id, @RequestBody OrderReqDto reqDto) {
         return orderService.updateOrder(id, reqDto);
     }
 
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         orderService.deleteOrderById(id);
     }
-
-
 }
 

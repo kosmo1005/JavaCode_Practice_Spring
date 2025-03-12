@@ -5,33 +5,27 @@ import com.kulushev.app.dto.OrderReqDto;
 import com.kulushev.app.dto.OrderRespDto;
 import com.kulushev.app.entity.GoodEntity;
 import com.kulushev.app.entity.OrderEntity;
-import com.kulushev.app.entity.UserEntity;
 import com.kulushev.app.enums.OrderStatus;
 import com.kulushev.app.exception.OrderNotFoundException;
 import com.kulushev.app.exception.UserNotFoundException;
-import com.kulushev.app.repository.OrderRepository;
+import com.kulushev.app.repository.JDBC.JDBCOrderRepository;
 import com.kulushev.app.transformer.OrderTransformer;
 import com.kulushev.app.util.CheckNPE;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
 public class OrderService {
 
-    private final OrderRepository repo;
+    private final JDBCOrderRepository repo;
     private final OrderTransformer t;
     private final UserService userService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Transactional
     //TODO: решить проблему идемпотентности (ключ идемпотентности)
@@ -43,31 +37,32 @@ public class OrderService {
         }
 
         var entity = t.dtoToEntity(dto);
-        entity.setUser(entityManager.getReference(UserEntity.class, UUID.fromString(dto.userId())));
         entity.setStatus(OrderStatus.NEW);
         entity.setTotalPrice(
                 entity.getGoods().stream()
                         .map(GoodEntity::getPrice)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-        var savedOrder = repo.save(entity);
-        return t.entityToDto(savedOrder);
+        var savedEntity = repo.save(entity);
+        return t.entityToDto(savedEntity);
     }
 
     @Transactional(readOnly = true)
-    public OrderRespDto getById(Long id) {
+    public OrderRespDto getById(UUID id) {
         var order = repo.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
         return t.entityToDto(order);
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderRespDto> getAll(Pageable pageable) {
-        return repo.findAll(pageable).map(t::entityToDto);
+    public List<OrderRespDto> getAll() {
+        return repo.findAll().stream()
+                .map(t::entityToDto)
+                .toList();
     }
 
     @Transactional
-    public OrderRespDto updateOrder(Long id, OrderReqDto dto) {
+    public OrderRespDto updateOrder(UUID id, OrderReqDto dto) {
         if (!orderExists(id)) {
             throw new OrderNotFoundException("Order not found");
         }
@@ -76,19 +71,18 @@ public class OrderService {
         }
 
         var order = t.dtoToEntity(dto);
-        order.setUser(entityManager.getReference(UserEntity.class, dto.userId()));
-        order.setStatus(dto.status());
+        order.setId(id);
         order.setTotalPrice(
                 dto.goods().stream()
                         .map(GoodReqDto::price)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-        OrderEntity updatedOrder = repo.save(order);
+        OrderEntity updatedOrder = repo.update(order);
         return t.entityToDto(updatedOrder);
     }
 
     @Transactional
-    public void deleteOrderById(Long id) {
+    public void deleteOrderById(UUID id) {
         if (repo.findById(id).isEmpty()) {
             throw new OrderNotFoundException("Order not found");
         }
@@ -96,7 +90,7 @@ public class OrderService {
     }
 
     @Transactional
-    public boolean orderExists(Long id) {
+    public boolean orderExists(UUID id) {
         return repo.findById(id).isPresent();
     }
 }

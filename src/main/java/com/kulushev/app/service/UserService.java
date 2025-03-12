@@ -4,7 +4,7 @@ import com.kulushev.app.dto.UserReqDto;
 import com.kulushev.app.dto.UserRespDto;
 import com.kulushev.app.exception.UserAlreadyExist;
 import com.kulushev.app.exception.UserNotFoundException;
-import com.kulushev.app.repository.UserRepository;
+import com.kulushev.app.repository.JDBC.JDBCUserRepository;
 import com.kulushev.app.transformer.UserTransformer;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    private final UserRepository repo;
+    private final JDBCUserRepository repo;
     private final UserTransformer t;
 
     @Transactional
@@ -29,20 +29,17 @@ public class UserService {
 
     @Transactional
     public UserRespDto getUserById(UUID id) {
-        return t.entityToDto(repo.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found")));
+        return t.entityToDto(repo.findById(id).orElseThrow(UserNotFoundException::new));
     }
 
     @Transactional
     public UserRespDto findUserByEmail(String email) {
-        return t.entityToDto(repo.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found")));
+        return t.entityToDto(repo.findByEmail(email).orElseThrow(UserNotFoundException::new));
     }
 
     @Transactional
     public UserRespDto findUserByName(String name) {
-        return t.entityToDto(repo.findByName(name)
-                .orElseThrow(() -> new UserNotFoundException("User not found")));
+        return t.entityToDto(repo.findByName(name).orElseThrow(UserNotFoundException::new));
     }
 
     @Transactional
@@ -51,7 +48,8 @@ public class UserService {
         if (repo.findByEmail(entity.getEmail()).isPresent()) {
             throw new UserAlreadyExist("User with this email already exists");
         }
-        return t.entityToDto(repo.save(entity));
+        var savedEntity = repo.save(entity);
+        return t.entityToDto(savedEntity);
     }
 
     @Transactional
@@ -66,8 +64,4 @@ public class UserService {
     public boolean userExists(UUID id) {
         return repo.findById(id).isPresent();
     }
-
-
-
-
 }

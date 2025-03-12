@@ -1,12 +1,8 @@
 package com.kulushev.app.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.kulushev.app.JsonMapper;
-import com.kulushev.app.dto.UserReqDto;
-import com.kulushev.app.dto.UserRespDto;
 import com.kulushev.app.enums.Views;
 import com.kulushev.app.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

@@ -10,8 +10,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface OrderTransformer {
 
-    @Mapping(target = "userId", source = "user.id")
     OrderRespDto entityToDto(OrderEntity orderEntity);
-
     OrderEntity dtoToEntity(OrderReqDto orderReqDto);
 }
