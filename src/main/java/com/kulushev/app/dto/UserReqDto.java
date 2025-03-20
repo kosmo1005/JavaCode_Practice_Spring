@@ -13,6 +13,13 @@ public record UserReqDto(
         String lastName,
 
         @NotBlank(message = "Email must not be blank")
-        String email
-) {
+        String email,
+
+        @NotBlank(message = "Login must not be blank")
+        String login,
+
+        String password,
+        String token,
+        String refreshToken
+        ) {
 }

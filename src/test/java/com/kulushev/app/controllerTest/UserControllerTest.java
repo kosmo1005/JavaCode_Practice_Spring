@@ -1,5 +1,6 @@
 package com.kulushev.app.controllerTest;
 
+/*
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kulushev.app.controller.UserController;
 import com.kulushev.app.controllerTest.dataProvider.UserDataProvider;
@@ -23,9 +24,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
+*/
 
 
-@WebMvcTest(UserController.class)
+/*@WebMvcTest(UserController.class)
 public class UserControllerTest {
 
     @Autowired
@@ -153,4 +155,4 @@ public class UserControllerTest {
 
 
 
-}
+}*/

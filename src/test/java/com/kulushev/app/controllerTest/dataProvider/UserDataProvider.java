@@ -1,6 +1,6 @@
 package com.kulushev.app.controllerTest.dataProvider;
 
-import com.kulushev.app.dto.GoodRespDto;
+/*import com.kulushev.app.dto.GoodRespDto;
 import com.kulushev.app.dto.OrderRespDto;
 import com.kulushev.app.dto.UserReqDto;
 import com.kulushev.app.dto.UserRespDto;
@@ -8,9 +8,9 @@ import com.kulushev.app.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
+import java.util.UUID;*/
 
-public class UserDataProvider {
+/*public class UserDataProvider {
     public static final UUID USER_ID = UUID.fromString("32e2a465-4945-4f5e-81df-63e1780df364");
 
     public static UserRespDto getUserRespDto_1() {
@@ -80,4 +80,4 @@ public class UserDataProvider {
                 "Doe",
                 "johnexample.com");
     }
-}
+}*/

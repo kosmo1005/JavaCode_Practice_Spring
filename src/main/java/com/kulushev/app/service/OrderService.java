@@ -7,14 +7,14 @@ import com.kulushev.app.entity.GoodEntity;
 import com.kulushev.app.entity.OrderEntity;
 import com.kulushev.app.entity.UserEntity;
 import com.kulushev.app.enums.OrderStatus;
-import com.kulushev.app.exception.OrderNotFoundException;
-import com.kulushev.app.exception.UserNotFoundException;
+import com.kulushev.app.exception.notFound.OrderNotFoundException;
+import com.kulushev.app.exception.notFound.UserNotFoundException;
 import com.kulushev.app.repository.OrderRepository;
 import com.kulushev.app.transformer.OrderTransformer;
 import com.kulushev.app.util.CheckNPE;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class OrderService {
     public OrderRespDto createOrder(OrderReqDto dto) {
         CheckNPE.checkNPE(dto);
 
-        if(!userService.userExists(dto.userId())){
+        if(!userService.userExistsById(dto.userId())){
             throw new UserNotFoundException("User not found");
         }
 
@@ -57,7 +57,7 @@ public class OrderService {
         if (!orderExists(id)) {
             throw new OrderNotFoundException("Order not found");
         }
-        if (!userService.userExists(dto.userId())) {
+        if (!userService.userExistsById(dto.userId())) {
             throw new UserNotFoundException("User not found");
         }
 

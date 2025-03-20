@@ -1,26 +1,40 @@
 package com.kulushev.app.service;
 
-import com.kulushev.app.dto.UserReqDto;
 import com.kulushev.app.dto.UserRespDto;
-import com.kulushev.app.exception.UserAlreadyExist;
-import com.kulushev.app.exception.UserNotFoundException;
+import com.kulushev.app.entity.UserEntity;
+import com.kulushev.app.exception.notFound.UserNotFoundException;
 import com.kulushev.app.repository.UserRepository;
 import com.kulushev.app.transformer.UserTransformer;
 import com.kulushev.app.views.UserFullNameProjection;
 import com.kulushev.app.views.UserWithInfoAboutOrders;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository repo;
     private final UserTransformer t;
+
+    @Lazy
+    @Autowired
+    private UserService  self;
+
+    @Override
+    public UserEntity loadUserByUsername(String login){
+        return repo.findByLogin(login)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с таким логином не найден"));
+    }
+
 
     @Transactional
     public List<UserRespDto> getAllUsers() {
@@ -48,17 +62,18 @@ public class UserService {
     }
 
     @Transactional
-    public UserRespDto createUser (UserReqDto dto) {
-        var entity = t.dtoToEntity(dto);
-        if (repo.findByEmail(entity.getEmail()).isPresent()) {
-            throw new UserAlreadyExist("User with this email already exists");
-        }
-        return t.entityToDto(repo.save(entity));
+    public UserRespDto createUser (UserEntity user) {
+        return t.entityToDto(repo.save(user));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public UserRespDto updateUser (UserEntity user) {
+        return t.entityToDto(repo.save(user));
     }
 
     @Transactional
     public void deleteUserById(UUID id) {
-        if (repo.findById(id).isEmpty()) {
+        if (self.userExistsById(id)) {
             throw new UserNotFoundException("User not found");
         }
          repo.deleteById(id);
@@ -77,9 +92,19 @@ public class UserService {
     }
 
     @Transactional
-    public boolean userExists(UUID id) {
+    public boolean userExistsById(UUID id) {
         return repo.findById(id).isPresent();
     }
+
+    @Transactional
+    public boolean userExistsByLogin(String login) {
+        return repo.findByLogin(login).isPresent();
+    }
+    @Transactional
+    public boolean userExistsByEmail(String email) {
+        return repo.findByEmail(email).isPresent();
+    }
+
 
 
 
