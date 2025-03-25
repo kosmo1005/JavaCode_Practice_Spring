@@ -34,6 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if (!request.isSecure()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Доступ разрешён только через HTTPS");
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ") || authHeader.isBlank()) {
             filterChain.doFilter(request, response);
