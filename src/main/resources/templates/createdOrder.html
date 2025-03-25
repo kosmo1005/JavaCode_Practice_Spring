@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказ создан</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .goods-list {
+            text-align: left;
+            margin-top: 10px;
+            padding-left: 0;
+        }
+
+        .goods-list li {
+            list-style-type: none;
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Заказ успешно создан!</h2>
+
+    <p><strong>ID заказа:</strong> <span th:text="${order.id}"></span></p>
+    <p><strong>Статус:</strong> <span th:text="${order.status}"></span></p>
+    <p><strong>Общая цена:</strong> <span th:text="${order.totalPrice}"></span> ₽</p>
+
+    <h3>Товары:</h3>
+    <ul class="goods-list">
+        <li th:each="good : ${order.goods}">
+            <span th:text="${good.name}"></span> — <span th:text="${good.price}"></span> ₽
+        </li>
+    </ul>
+
+    <a href="/app/auth/oauthSuccess" class="btn">Круто!</a>
+</div>
+
+</body>
+</html>

@@ -6,12 +6,11 @@ import com.kulushev.app.views.Views;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @JsonView(Views.FullInfo.class)
 public record OrderRespDto(
         Long id,
-        UUID userId,
+        String userId,
         OrderStatus status,
         BigDecimal totalPrice,
         List<GoodRespDto> goods

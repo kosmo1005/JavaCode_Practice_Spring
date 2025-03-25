@@ -10,7 +10,7 @@ import com.kulushev.app.enums.OrderStatus;
 import com.kulushev.app.exception.notFound.OrderNotFoundException;
 import com.kulushev.app.exception.notFound.UserNotFoundException;
 import com.kulushev.app.repository.OrderRepository;
-import com.kulushev.app.transformer.OrderTransformer;
+import com.kulushev.app.transformer.OrderTransformer1;
 import com.kulushev.app.util.CheckNPE;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,20 +19,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class OrderService {
 
     private final OrderRepository repo;
-    private final OrderTransformer t;
+    private final OrderTransformer1 t;
     private final UserService userService;
+    private final GoodService goodService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Transactional
-    //TODO: решить проблему идемпотентности (ключ идемпотентности)
     public OrderRespDto createOrder(OrderReqDto dto) {
         CheckNPE.checkNPE(dto);
 
@@ -40,15 +41,17 @@ public class OrderService {
             throw new UserNotFoundException("User not found");
         }
 
-        var entity = t.dtoToEntity(dto);
+        var entity = new OrderEntity();
         entity.setUser(entityManager.getReference(UserEntity.class, dto.userId()));
         entity.setStatus(OrderStatus.NEW);
         entity.setTotalPrice(
-                entity.getGoods().stream()
-                        .map(GoodEntity::getPrice)
+                dto.goods().stream()
+                        .map(GoodReqDto::price)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
         OrderEntity savedOrder = repo.save(entity);
+        List<GoodEntity> goodsWithIds = goodService.saveGoods(dto.goods(), savedOrder.getId());
+        savedOrder.setGoods(goodsWithIds);
         return t.entityToDto(savedOrder);
     }
 

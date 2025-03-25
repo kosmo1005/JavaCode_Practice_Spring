@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Success</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .btn {
+            display: block;
+            width: 250px;
+            padding: 10px;
+            margin: 5px auto;
+            text-align: center;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .subtext {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .logout {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Успешная авторизация!</h2>
+    <p><strong>ID:</strong> <span th:text="${id}" id="userId"></span></p>
+    <p><strong>Логин:</strong> <span th:text="${login}"></span></p>
+    <p><strong>Имя:</strong> <span th:text="${name}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${email}"></span></p>
+
+    <h3>Доступные действия:</h3>
+
+    <button class="btn" onclick="redirectToOrders()">Список твоих заказов</button>
+
+    <button class="btn" onclick="redirectToCreateOrder()">Добавить новый заказ</button>
+
+    <form th:action="@{/app/orders/{id}(id=${id})}" method="post">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn">
+            Удалить заказ <span class="subtext">(только для администратора)</span>
+        </button>
+    </form>
+
+    <a href="/app/users" class="btn">
+        Список пользователей <span class="subtext">(только для администратора)</span>
+    </a>
+
+    <a th:href="@{/app/users/full/{id}(id=${id})}" class="btn">
+        Детали пользователя <span class="subtext">(только для администратора)</span>
+    </a>
+
+    <a href="/logout" class="btn logout">Выйти</a>
+</div>
+
+<script>
+    function redirectToOrders() {
+        const userId = document.getElementById("userId").textContent.trim();
+        if (userId) {
+            window.location.href = `/app/users/infoAboutOrders/${encodeURIComponent(userId)}`;
+        } else {
+            console.error("User ID is missing");
+        }
+    }
+
+    function redirectToCreateOrder() {
+        const userId = document.getElementById("userId").textContent.trim();
+        if (userId) {
+            window.location.href = `/app/orders/createOrderForm?userId=${encodeURIComponent(userId)}`;
+        } else {
+            console.error("User ID is missing");
+        }
+    }
+</script>
+
+</body>
+</html>

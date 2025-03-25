@@ -1,38 +1,41 @@
 package com.kulushev.app.controller;
 
-import com.kulushev.app.dto.auth.AuthRespDto;
-import com.kulushev.app.dto.auth.RefreshReqDto;
-import com.kulushev.app.dto.auth.SignInReqDto;
-import com.kulushev.app.dto.UserReqDto;
-import com.kulushev.app.dto.UserRespDto;
-import com.kulushev.app.service.AuthService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
 
-@RestController
+@Controller
 @RequestMapping("/app/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @PostMapping("/signUp")
-    public ResponseEntity<UserRespDto> signUp(@Valid @RequestBody UserReqDto userReqDto) throws Exception {
-        return ResponseEntity.ok(authService.signUp(userReqDto));
+    @GetMapping("/oauthSuccess")
+    public String oauthSuccess(Model model, @AuthenticationPrincipal OAuth2User user) {
+        try {
+        model.addAttribute("id", user.getAttribute("id"));
+        model.addAttribute("login", user.getAttribute("login"));
+        model.addAttribute("name", user.getAttribute("name"));
+        model.addAttribute("email", user.getAttribute("email"));
+        return "oauthSuccess";
+        } catch (Exception e) {
+            logger.error("Ошибка в oauthSuccess", e);
+            return "errorPage";
+        }
     }
 
-    @PostMapping("/signIn")
-    public ResponseEntity<AuthRespDto> signIn(@Valid @RequestBody SignInReqDto signInReqDto) throws Exception {
-        return ResponseEntity.ok(authService.signIn(signInReqDto));
+    @GetMapping("/error")
+    public String authErrorPage(Model model, @RequestParam(required = false) String error) {
+        model.addAttribute("errorMessage", error != null ? error : "Произошла ошибка во время авторизации.");
+        return "errorPage";
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthRespDto> refreshToken(@Valid @RequestBody RefreshReqDto reqDto) {
-        return ResponseEntity.ok(authService.refreshToken(reqDto));
-    }
 }

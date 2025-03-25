@@ -1,23 +1,19 @@
 package com.kulushev.app.exception.exceptionHandler;
 
-import com.kulushev.app.exception.ErrorResponseDto;
-import com.kulushev.app.exception.auth.AuthenticationFailedException;
-import com.kulushev.app.exception.auth.TooManyLoginAttemptsException;
 import com.kulushev.app.exception.notFound.OrderNotFoundException;
 import com.kulushev.app.exception.UserAlreadyExist;
 import com.kulushev.app.exception.notFound.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.validation.FieldError;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,54 +22,62 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {IllegalArgumentException.class,
             HttpMessageNotReadableException.class})
-    public ResponseEntity<ErrorResponseDto> illegalArgumentException(Exception ex) {
-        String errorMessage = String.format("%s", ex.getMessage());
-        return ResponseEntity.status(400).body(new ErrorResponseDto(errorMessage));
+    public ModelAndView illegalArgumentException(Exception ex) {
+
+        ModelAndView modelAndView = new ModelAndView("errorPage");
+        modelAndView.addObject("statusCode", 400);
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        return modelAndView;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ModelAndView handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
                 .toList();
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("errors", errors);
-
-        return ResponseEntity.status(400).body(body);
+        ModelAndView modelAndView = new ModelAndView("errorPage");
+        modelAndView.addObject("statusCode", 400);
+        modelAndView.addObject("errorMessage", errors);
+        return modelAndView;
     }
 
-    @ExceptionHandler(value = {AuthenticationFailedException.class})
-    public ResponseEntity<ErrorResponseDto> authenticationFailedException(Exception ex) {
-        String errorMessage = String.format("%s", ex.getMessage());
-        return ResponseEntity.status(401).body(new ErrorResponseDto(errorMessage));
+    @ExceptionHandler(AccessDeniedException.class)
+    public ModelAndView accessDeniedException(AccessDeniedException ex) {
+
+        ModelAndView modelAndView = new ModelAndView("errorPage");
+        modelAndView.addObject("statusCode", 403);
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        return modelAndView;
     }
 
     @ExceptionHandler(value = {UserNotFoundException.class, OrderNotFoundException.class})
-    public ResponseEntity<ErrorResponseDto> notFoundException(Exception ex) {
-        String errorMessage = String.format("%s", ex.getMessage());
-        return ResponseEntity.status(404).body(new ErrorResponseDto(errorMessage));
+    public ModelAndView notFoundException(Exception ex) {
+
+        ModelAndView modelAndView = new ModelAndView("errorPage");
+        modelAndView.addObject("statusCode", 404);
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        return modelAndView;
     }
 
     @ExceptionHandler(UserAlreadyExist.class)
-    public ResponseEntity<ErrorResponseDto> alreadyExistException(Exception ex) {
-        String errorMessage = String.format("%s", ex.getMessage());
-        return ResponseEntity.status(409).body(new ErrorResponseDto(errorMessage));
-    }
+    public ModelAndView alreadyExistException(Exception ex) {
 
-    @ExceptionHandler(TooManyLoginAttemptsException.class)
-    public ResponseEntity<ErrorResponseDto> tooManyLoginAttemptsException(Exception ex) {
-        String errorMessage = String.format("%s", ex.getMessage());
-        return ResponseEntity.status(429).body(new ErrorResponseDto(errorMessage));
+        ModelAndView modelAndView = new ModelAndView("errorPage");
+        modelAndView.addObject("statusCode", 409);
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        return modelAndView;
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> unknownException(Exception ex) {
-        log.error("Unexpected error", ex);
-        String errorMessage = String.format("%s", ex.getMessage());
-        return ResponseEntity.status(500).body(new ErrorResponseDto(errorMessage));
+    public ModelAndView unknownException(Exception ex) {
+
+        ModelAndView modelAndView = new ModelAndView("errorPage");
+        modelAndView.addObject("statusCode", 500);
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        return modelAndView;
     }
 
 }

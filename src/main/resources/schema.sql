@@ -4,21 +4,17 @@ DROP TABLE IF EXISTS my_user;
 
 CREATE TABLE my_user
 (
-    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    first_name       VARCHAR(255) NOT NULL,
-    last_name        VARCHAR(255) NOT NULL,
-    email            VARCHAR(255) NOT NULL UNIQUE,
+    id               VARCHAR(255) PRIMARY KEY DEFAULT gen_random_uuid(),
+    name       VARCHAR(255) NOT NULL,
+    email            VARCHAR(255)  UNIQUE,
     login            VARCHAR(255) NOT NULL UNIQUE,
-    hash_of_password VARCHAR(255),
-    role             VARCHAR(50) NOT NULL,
-    count_of_failed_auth INT NOT NULL,
-    account_locked BOOLEAN NOT NULL
+    role             VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE user_order
 (
     id          SERIAL PRIMARY KEY,
-    user_id     UUID        NOT NULL,
+    user_id     VARCHAR(255)        NOT NULL,
     status      VARCHAR(50) NOT NULL,
     total_price DECIMAL(19, 2),
     FOREIGN KEY (user_id) REFERENCES my_user (id) ON DELETE CASCADE

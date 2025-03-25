@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание заказа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input, button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .goods-container {
+            margin-top: 10px;
+        }
+
+        .good-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Создание заказа</h2>
+
+    <form id="orderForm" action="/app/orders" method="post">
+        <input type="hidden" name="userId" id="userId">
+
+        <h3>Товары:</h3>
+        <div id="goodsList" class="goods-container"></div>
+
+        <button type="button" class="btn" onclick="addGood()">Добавить товар</button>
+        <button type="submit" class="btn">Создать заказ</button>
+    </form>
+</div>
+
+<script>
+    function getUserIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("userId");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const userIdElement = document.getElementById("userId");
+        if (userIdElement) {
+            userIdElement.value = getUserIdFromUrl();
+        }
+    });
+
+    function addGood() {
+        const goodsList = document.getElementById("goodsList");
+        const div = document.createElement("div");
+        div.classList.add("good-item");
+
+        const index = goodsList.children.length;
+
+        div.innerHTML = `
+            <input type="text" name="goods[${index}].name" placeholder="Название товара" required>
+            <input type="number" name="goods[${index}].price" placeholder="Цена" required>
+            <button type="button" class="btn-danger" onclick="removeGood(this)">✖</button>
+        `;
+
+        goodsList.appendChild(div);
+    }
+
+    function removeGood(button) {
+        button.parentElement.remove();
+    }
+</script>
+
+</body>
+</html>
